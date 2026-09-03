@@ -30,7 +30,7 @@ export function MobileNav() {
         <div id="mobile-nav-panel" className="fixed inset-x-0 top-[64px] bottom-0 z-40 bg-ink-950/98 backdrop-blur-xl overflow-y-auto p-4">
           <ul className="space-y-1">
             {NAV_ITEMS.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(item.href + "/");
+              const active = pathname === item.href || (pathname || "").startsWith(item.href + "/");
               return (
                 <li key={item.href}>
                   <Link

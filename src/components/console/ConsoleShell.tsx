@@ -56,7 +56,7 @@ export function ConsoleShell({
         <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin">
           <ul className="space-y-1">
             {NAV.map((item) => {
-              const active = item.href === "/console" ? pathname === "/console" : pathname.startsWith(item.href);
+              const active = item.href === "/console" ? pathname === "/console" : (pathname || "").startsWith(item.href);
               return (
                 <li key={item.href}>
                   <Link
