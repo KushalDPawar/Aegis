@@ -166,36 +166,6 @@ async function main() {
   });
 
   // ---------------------------------------------------------------------
-  // User B — normal customer
-  // ---------------------------------------------------------------------
-  const anita = await prisma.user.create({
-    data: {
-      email: "anita@aegisdemo.in",
-      passwordHash,
-      role: "CUSTOMER",
-      profile: {
-        create: {
-          fullName: "Anita Sharma",
-          age: 34,
-          phone: "+91 98111 22334",
-          vulnerabilityProfile: "STANDARD",
-          avatarSeed: "Anita Sharma",
-        },
-      },
-      accounts: {
-        create: {
-          accountNumber: "500987654321",
-          nickname: "Primary Savings",
-          balance: 650_000,
-          avgTxnAmount: 18_000,
-          status: "ACTIVE",
-        },
-      },
-    },
-  });
-  void anita;
-
-  // ---------------------------------------------------------------------
   // Impact Engine baseline (clearly-labeled synthetic network metrics)
   // ---------------------------------------------------------------------
   await prisma.impactMetric.createMany({
@@ -218,16 +188,14 @@ async function main() {
   // Hard-coding plausible-looking telemetry would make the console a
   // screenshot rather than a view of the system.
   // ------------------------------------------------------------------
-  const anitaAccount = await prisma.account.findFirstOrThrow({ where: { userId: anita.id } });
 
   const estate: Array<{ userId: string; accountId: string; code: (typeof SCENARIOS)[number]["code"] }> = [
     { userId: rajesh.id, accountId: rajeshAccount.id, code: "KYC_IMPERSONATION" },
     { userId: rajesh.id, accountId: rajeshAccount.id, code: "DIGITAL_ARREST" },
     { userId: rajesh.id, accountId: rajeshAccount.id, code: "ELECTRICITY_SCAM" },
     { userId: rajesh.id, accountId: rajeshAccount.id, code: "LEGITIMATE_PAYMENT" },
-    { userId: anita.id, accountId: anitaAccount.id, code: "FAKE_INVESTMENT" },
-    { userId: anita.id, accountId: anitaAccount.id, code: "FAMILY_EMERGENCY" },
-    { userId: anita.id, accountId: anitaAccount.id, code: "LEGITIMATE_PAYMENT" },
+    { userId: rajesh.id, accountId: rajeshAccount.id, code: "FAKE_INVESTMENT" },
+    { userId: rajesh.id, accountId: rajeshAccount.id, code: "FAMILY_EMERGENCY" },
   ];
 
   let opened = 0;
@@ -320,7 +288,6 @@ async function main() {
   console.log("Demo accounts (password for all):", DEMO_PASSWORD);
   console.log(" - rajesh@aegisdemo.in  (vulnerable customer, CUSTOMER role)");
   console.log(" - priya@aegisdemo.in   (trusted contact, TRUSTED_CONTACT role)");
-  console.log(" - anita@aegisdemo.in   (standard customer, CUSTOMER role)");
   console.log(" - ops@aegisdemo.in     (bank operations console, BANK_OPS role)");
 }
 

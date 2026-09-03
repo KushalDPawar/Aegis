@@ -16,6 +16,7 @@ export function landingPathForRole(role: UserRole | string): string {
     case "BANK_OPS":
       return "/console";
     default:
-      return "/dashboard";
+      return "/intelligence";
   }
 }
+

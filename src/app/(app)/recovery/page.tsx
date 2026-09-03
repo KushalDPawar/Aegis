@@ -13,8 +13,8 @@ export default async function RecoveryPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="rise">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal-teal/70 mb-2">Recovery Center</p>
-        <h1 className="font-display text-2xl font-semibold text-cream-100">Recovery & Financial Continuity</h1>
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal-teal/70 mb-2">Resilience Predictor</p>
+        <h1 className="font-display text-2xl font-semibold text-cream-100">Financial Health</h1>
         <p className="text-cream-100/55 mt-1.5 text-sm max-w-2xl">
           Protection should never mean total exclusion. This is a simulated recovery workflow — essential banking
           stays available while a flagged case is under review.

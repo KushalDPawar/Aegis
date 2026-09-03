@@ -5,27 +5,27 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
 export const NAV_ITEMS = [
-  { href: "/dashboard", label: "Aegis Core", hint: "Command center" },
-  { href: "/intelligence", label: "Intelligence Centre", hint: "How Aegis decides" },
-  { href: "/pay", label: "New Payment", hint: "Send money" },
-  { href: "/incidents", label: "Incidents", hint: "Scam DNA & Replay" },
-  { href: "/trusted-circle", label: "Trusted Circle", hint: "Family & contacts" },
-  { href: "/recovery", label: "Recovery Center", hint: "Continuity & navigator" },
-  { href: "/impact", label: "Impact", hint: "Protection metrics" },
-  { href: "/lab", label: "Scenario Lab", hint: "Run a demo" },
-  { href: "/status", label: "System Status", hint: "Security & AI" },
+  { href: "/incidents",    label: "Fraud Intelligence",   hint: "LIVE RISK & CASES" },
+  { href: "/recovery",     label: "Financial Health",     hint: "RESILIENCE PREDICTOR" },
+  { href: "/intelligence", label: "Intelligence Centre",  hint: "HOW AEGIS DECIDES" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary" className="hidden lg:flex flex-col w-64 shrink-0 border-r border-white/8 px-4 py-6">
-      <Link href="/dashboard" className="flex items-center gap-2 px-3 mb-8 group">
-        <ShieldMark />
-        <span className="font-display text-lg font-semibold tracking-tight text-cream-100">Aegis</span>
+    <nav aria-label="Primary" className="hidden lg:flex flex-col w-56 shrink-0 border-r border-white/8 px-4 py-6 bg-ink-950">
+      {/* Brand / header */}
+      <Link href="/intelligence" className="flex flex-col px-3 mb-8 gap-0.5 group">
+        <span className="font-display text-lg font-semibold tracking-tight text-cream-100 group-hover:text-signal-teal transition-colors">
+          Aegis
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream-100/35">
+          Operations Console
+        </span>
       </Link>
-      <ul className="space-y-1 flex-1">
+
+      <ul className="space-y-0.5 flex-1">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
@@ -35,21 +35,31 @@ export function Sidebar() {
                 aria-current={active ? "page" : undefined}
                 className={clsx(
                   "flex flex-col rounded-xl px-3 py-2.5 transition-colors relative",
-                  active ? "bg-signal-teal/10 text-cream-100" : "text-cream-100/55 hover:bg-white/5 hover:text-cream-100"
+                  active
+                    ? "bg-signal-teal/10 text-cream-100"
+                    : "text-cream-100/55 hover:bg-white/5 hover:text-cream-100"
                 )}
               >
-                {active && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-signal-teal" aria-hidden="true" />}
+                {active && (
+                  <span
+                    className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-signal-teal"
+                    aria-hidden="true"
+                  />
+                )}
                 <span className="text-sm font-medium">{item.label}</span>
-                <span className="text-[11px] text-cream-100/40">{item.hint}</span>
+                <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-cream-100/35 mt-0.5">
+                  {item.hint}
+                </span>
               </Link>
             </li>
           );
         })}
       </ul>
-      <p className="px-3 text-[11px] text-cream-100/30 leading-relaxed font-mono">
-        SIMULATION ENVIRONMENT
+
+      <p className="px-3 text-[10px] text-cream-100/25 leading-relaxed font-mono uppercase tracking-wide">
+        Simulation Only — No Real
         <br />
-        No real accounts connected.
+        Accounts
       </p>
     </nav>
   );
