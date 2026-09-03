@@ -29,7 +29,7 @@ export function RegisterForm() {
           setLoading(false);
           return;
         }
-        router.push("/dashboard");
+        router.push("/platform");
         router.refresh();
       }}
     >

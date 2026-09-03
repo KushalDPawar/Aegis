@@ -6,7 +6,7 @@ import { ShieldMark } from "@/components/layout/Sidebar";
 
 export default async function RegisterPage() {
   const session = await readSession();
-  if (session) redirect(session.role === "TRUSTED_CONTACT" ? "/trusted/dashboard" : "/dashboard");
+  if (session) redirect(session.role === "TRUSTED_CONTACT" ? "/trusted/dashboard" : "/platform");
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">

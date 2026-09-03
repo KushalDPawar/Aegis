@@ -19,17 +19,15 @@ Demo accounts (password for all: `Passw0rd!Demo`):
 | Email | Role |
 |---|---|
 | `rajesh@aegisdemo.in` | Vulnerable customer (age 67) |
-| `anita@aegisdemo.in` | Standard customer |
-| `priya@aegisdemo.in` | Trusted-contact portal |
+| `ops@aegisdemo.in` | Bank operations console |
 
 To reset all demo data back to a clean starting state at any time: `npm run db:reset`.
 
 ## Demo flow
 
-1. Sign in as **Rajesh Kumar** → **Scenario Lab** → run **KYC Impersonation**.
+1. Sign in as **Rajesh Kumar** → open the Ascend platform → explore Fraud Intelligence / Financial Health / AI Governance.
 2. Walk through Sentinel's risk breakdown → answer MIND's intent-check questions → watch GUARD pause the payment → view the Scam DNA / Incident / Recovery Center it opens.
-3. Sign in as **Priya Kumar** (trusted contact) → approve or keep the payment paused.
-4. Back as Rajesh, run the **Legitimate High-Value Payment** scenario (same ₹85,000 amount, known contractor) to see it allowed after standard verification — proof the system doesn't just block large payments.
+3. Run the **Legitimate High-Value Payment** scenario (same ₹85,000 amount, known contractor) to see it allowed after standard verification — proof the system doesn't just block large payments.
 
 ## Verification
 

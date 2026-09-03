@@ -26,9 +26,6 @@ export default async function TrustedCirclePage() {
 
       <Panel className="rise" style={{ animationDelay: "140ms" }}>
         <PanelHeader eyebrow="Add" title="Add a trusted contact" />
-        <p className="text-xs text-cream-100/45 mb-4 -mt-2">
-          Tip: to see the reviewer experience, add <span className="font-mono text-cream-100/70">priya@aegisdemo.in</span> (seeded demo trusted-contact account).
-        </p>
         <AddTrustedContactForm />
       </Panel>
     </div>

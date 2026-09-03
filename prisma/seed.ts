@@ -136,35 +136,6 @@ async function main() {
   });
   void electricityBoard;
 
-  // Trusted contact — Priya, Rajesh's daughter
-  const priya = await prisma.user.create({
-    data: {
-      email: "priya@aegisdemo.in",
-      passwordHash,
-      role: "TRUSTED_CONTACT",
-      profile: {
-        create: {
-          fullName: "Priya Kumar",
-          age: 34,
-          phone: "+91 90000 11122",
-          vulnerabilityProfile: "STANDARD",
-          avatarSeed: "Priya Kumar",
-        },
-      },
-    },
-  });
-
-  await prisma.trustedContact.create({
-    data: {
-      accountId: rajeshAccount.id,
-      contactUserId: priya.id,
-      name: "Priya Kumar",
-      relationship: "Daughter",
-      email: "priya@aegisdemo.in",
-      canApprove: true,
-    },
-  });
-
   // ---------------------------------------------------------------------
   // Impact Engine baseline (clearly-labeled synthetic network metrics)
   // ---------------------------------------------------------------------
@@ -287,7 +258,6 @@ async function main() {
 
   console.log("Demo accounts (password for all):", DEMO_PASSWORD);
   console.log(" - rajesh@aegisdemo.in  (vulnerable customer, CUSTOMER role)");
-  console.log(" - priya@aegisdemo.in   (trusted contact, TRUSTED_CONTACT role)");
   console.log(" - ops@aegisdemo.in     (bank operations console, BANK_OPS role)");
 }
 

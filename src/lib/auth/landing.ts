@@ -3,20 +3,16 @@ import type { UserRole } from "@/lib/enums";
 /**
  * Where each role belongs after authenticating.
  *
- * Single source of truth: the login page, the login form and the guards all
- * read this. Previously the mapping was written out twice as a ternary that
- * only knew about TRUSTED_CONTACT, so a BANK_OPS user was sent to /dashboard —
- * which bounces non-customers straight back out, leaving the console
- * unreachable by signing in.
+ * Customers and bank ops land on the Ascend platform clone (/platform).
+ * Trusted contacts keep their dedicated review portal.
  */
 export function landingPathForRole(role: UserRole | string): string {
   switch (role) {
     case "TRUSTED_CONTACT":
       return "/trusted/dashboard";
     case "BANK_OPS":
-      return "/console";
+    case "CUSTOMER":
     default:
-      return "/intelligence";
+      return "/platform";
   }
 }
-

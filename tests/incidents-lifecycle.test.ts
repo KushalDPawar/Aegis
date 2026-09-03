@@ -53,7 +53,7 @@ describe("payment pause → incident → recovery lifecycle", () => {
     let acc = await prisma.account.findUniqueOrThrow({ where: { id: account.id } });
     expect(acc.status).toBe("PROTECTED");
 
-    const resolved = await resolveIncidentAsFalsePositive(incident.id, "Priya (daughter)");
+    const resolved = await resolveIncidentAsFalsePositive(incident.id, "Trusted contact");
     expect(resolved.status).toBe("CONTAINED");
 
     acc = await prisma.account.findUniqueOrThrow({ where: { id: account.id } });

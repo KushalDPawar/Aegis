@@ -1,14 +1,7 @@
-import { requireBankOps } from "@/lib/auth/guard";
-import { prisma } from "@/lib/db";
-import { ConsoleShell } from "@/components/console/ConsoleShell";
+import { redirect } from "next/navigation";
 
-export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
-  const { profile } = await requireBankOps();
-  const alertCount = await prisma.incident.count({ where: { status: "ACTIVE" } });
-
-  return (
-    <ConsoleShell operatorName={profile?.fullName ?? "Operator"} alertCount={alertCount}>
-      {children}
-    </ConsoleShell>
-  );
+/** Entire legacy console surface maps to the Ascend platform clone. */
+export default function ConsoleLayout({ children }: { children: React.ReactNode }) {
+  void children;
+  redirect("/platform");
 }

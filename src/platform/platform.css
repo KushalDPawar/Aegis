@@ -1,0 +1,190 @@
+/* Ascend / Sentinel platform tokens — scoped so landing chrome stays intact */
+
+:root {
+  --paper-top: #f4f3ef;
+  --paper-bottom: #eceae3;
+  --paper-surface: #ffffff;
+  --paper-elevated: #f9f8f5;
+
+  --ink: #191b1e;
+  --ink-muted: rgba(25, 27, 30, 0.68);
+  --ink-dim: rgba(25, 27, 30, 0.42);
+  --ink-faint: rgba(25, 27, 30, 0.18);
+
+  --hairline: rgba(25, 27, 30, 0.12);
+  --hairline-strong: rgba(25, 27, 30, 0.22);
+
+  --accent-slate: #5c6b78;
+  --accent-cyan: #0284c7;
+  --accent-amber: #d97706;
+  --accent-emerald: #059669;
+  --accent-rose: #e11d48;
+
+  --glow-color: rgba(92, 107, 120, 0.08);
+  --grain-opacity: 0.18;
+}
+
+.dark,
+.platform-root.dark {
+  --paper-top: #08090d;
+  --paper-bottom: #0d1016;
+  --paper-surface: #121620;
+  --paper-elevated: #181e2b;
+
+  --ink: #f1f3f7;
+  --ink-muted: rgba(241, 243, 247, 0.68);
+  --ink-dim: rgba(241, 243, 247, 0.42);
+  --ink-faint: rgba(241, 243, 247, 0.15);
+
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-strong: rgba(255, 255, 255, 0.16);
+
+  --accent-slate: #8899ac;
+  --accent-cyan: #00d2ff;
+  --accent-amber: #f59e0b;
+  --accent-emerald: #10b981;
+  --accent-rose: #f43f5e;
+
+  --glow-color: rgba(0, 210, 255, 0.06);
+  --grain-opacity: 0.28;
+}
+
+.platform-root {
+  font-family: var(--platform-font-sans), "Plus Jakarta Sans", Inter, system-ui, sans-serif;
+  background-color: var(--paper-bottom);
+  color: var(--ink);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.platform-root h1,
+.platform-root h2,
+.platform-root h3,
+.platform-root h4,
+.platform-root .font-display {
+  font-family: var(--platform-font-display), Outfit, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.platform-root .font-sans {
+  font-family: var(--platform-font-sans), "Plus Jakarta Sans", Inter, system-ui, sans-serif;
+}
+
+.platform-root .font-mono {
+  font-family: var(--platform-font-mono), "IBM Plex Mono", ui-monospace, monospace;
+}
+
+.platform-root .font-serif {
+  font-family: var(--platform-font-serif), "Instrument Serif", Georgia, serif;
+}
+
+.ascend-grain {
+  background-image: radial-gradient(rgba(128, 128, 128, var(--grain-opacity)) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.ambient-glow {
+  background: radial-gradient(circle at 50% 10%, var(--glow-color) 0%, transparent 70%);
+}
+
+.ascend-card {
+  background: var(--paper-surface);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.ascend-card:hover {
+  border-color: var(--hairline-strong);
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.12);
+}
+
+.platform-root ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.platform-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.platform-root ::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 9999px;
+}
+.platform-root ::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-dim);
+}
+
+.pill-active {
+  background: var(--ink);
+  color: var(--paper-bottom);
+}
+
+@keyframes beacon {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.4; }
+}
+
+.animate-beacon {
+  animation: beacon 2.4s ease-in-out infinite;
+}
+
+@keyframes orbit-cw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orbit-ccw {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes sonar-wave {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes laser-scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+.animate-orbit-cw {
+  animation: orbit-cw 25s linear infinite;
+}
+
+.animate-orbit-ccw {
+  animation: orbit-ccw 35s linear infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 4.5s ease-in-out infinite;
+}
+
+.animate-sonar-1 {
+  animation: sonar-wave 3.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.animate-sonar-2 {
+  animation: sonar-wave 3.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  animation-delay: 1.75s;
+}
+
+.animate-laser-scan {
+  animation: laser-scan 3s ease-in-out infinite;
+}
+
+@media (pointer: fine) {
+  .platform-root,
+  .platform-root *,
+  .platform-root *::before,
+  .platform-root *::after {
+    cursor: none !important;
+  }
+}
