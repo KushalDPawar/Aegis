@@ -1,0 +1,312 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// NOTE: SQLite has no native enum type, so every "enum-like" field below is a
+// plain String constrained by a TypeScript union type in src/lib/enums.ts and
+// validated at the application boundary (Zod). This keeps the data model
+// portable to Postgres later with a one-line datasource change.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("CUSTOMER") // CUSTOMER | TRUSTED_CONTACT | BANK_OPS
+  createdAt    DateTime @default(now())
+
+  profile          Profile?
+  accounts         Account[]
+  sessionEvents    SessionEvent[]
+  auditLogs        AuditLog[]
+  trustedContactOf TrustedContact[] @relation("ContactUser")
+}
+
+model Profile {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName             String
+  age                  Int
+  phone                String
+  vulnerabilityProfile String   @default("STANDARD") // STANDARD | ELEVATED | VULNERABLE
+  avatarSeed           String
+  createdAt            DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Banking simulation
+// ---------------------------------------------------------------------------
+
+model Account {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountNumber String   @unique
+  nickname      String
+  balance       Float
+  avgTxnAmount  Float    @default(0)
+  status        String   @default("ACTIVE") // ACTIVE | PROTECTED | RESTRICTED
+  createdAt     DateTime @default(now())
+
+  beneficiaries   Beneficiary[]
+  transactions    Transaction[]
+  trustedContacts TrustedContact[]
+  recoveryCases   RecoveryCase[]
+}
+
+model Beneficiary {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  name              String
+  nickname          String?
+  bankAccountNumber String
+  ifsc              String
+  relationship      String?
+  isFirstTime       Boolean  @default(true)
+  trustScore        Int      @default(50)
+  suspiciousFlag    Boolean  @default(false)
+  category          String   @default("individual")
+  createdAt         DateTime @default(now())
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  beneficiaryId     String
+  beneficiary       Beneficiary @relation(fields: [beneficiaryId], references: [id])
+  amount            Float
+  purpose           String
+  status            String   @default("PENDING") // PENDING|ALLOWED|VERIFY_REQUIRED|WARNED|COOLING_PERIOD|PAUSED|ESCALATED|COMPLETED|CANCELLED
+  scenarioCode      String?
+  riskInputSnapshot String?
+  createdAt         DateTime @default(now())
+  completedAt       DateTime?
+
+  events          TransactionEvent[]
+  riskAssessments RiskAssessment[]
+  intentChecks    IntentCheck[]
+  interventions   Intervention[]
+  incidents       Incident[]
+}
+
+model TransactionEvent {
+  id            String      @id @default(cuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  type          String
+  label         String
+  description   String
+  metadata      String?
+  createdAt     DateTime    @default(now())
+}
+
+model SessionEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  label     String
+  severity  Int      @default(0)
+  metadata  String?
+  createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Risk & AI
+// ---------------------------------------------------------------------------
+
+model RiskAssessment {
+  id                     String      @id @default(cuid())
+  transactionId          String
+  transaction            Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  transactionRisk        Int
+  beneficiaryRisk        Int
+  behavioralRisk         Int
+  contextRisk            Int
+  socialEngineeringRisk  Int
+  decisionIntegrity      Int
+  decisionIntegrityLabel String // RiskLevelName
+  overallLevel           String // RiskLevelName
+  recommendedAction      String // GuardAction
+  createdAt              DateTime @default(now())
+
+  signals RiskSignal[]
+}
+
+model RiskSignal {
+  id               String         @id @default(cuid())
+  riskAssessmentId String
+  riskAssessment   RiskAssessment @relation(fields: [riskAssessmentId], references: [id], onDelete: Cascade)
+  category         String
+  code             String
+  label            String
+  weight           Int
+  contribution     Int
+  detail           String
+  confidence       String @default("DETECTED")
+}
+
+model IntentCheck {
+  id               String      @id @default(cuid())
+  transactionId    String
+  transaction      Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  sequence         Int
+  question         String
+  response         String
+  classification   String
+  indicators       String
+  scamCategory     String?
+  confidence       Float
+  source           String
+  followUpQuestion String?
+  createdAt        DateTime    @default(now())
+}
+
+model ScamPattern {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  category    String
+  vector      String
+  psychology  String
+  description String
+  createdAt   DateTime @default(now())
+
+  incidents Incident[]
+}
+
+// ---------------------------------------------------------------------------
+// Incidents & interventions
+// ---------------------------------------------------------------------------
+
+model Incident {
+  id            String       @id @default(cuid())
+  userId        String
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  scamPatternId String?
+  scamPattern   ScamPattern? @relation(fields: [scamPatternId], references: [id])
+  title         String
+  status        String   @default("ACTIVE") // ACTIVE | CONTAINED | RESOLVED
+  severity      String   // RiskLevelName
+  signature     String   @unique
+  amountAtRisk  Float
+  amountSaved   Float    @default(0)
+  createdAt     DateTime @default(now())
+  resolvedAt    DateTime?
+
+  events        IncidentEvent[]
+  interventions Intervention[]
+  recoveryCase  RecoveryCase?
+}
+
+model IncidentEvent {
+  id          String   @id @default(cuid())
+  incidentId  String
+  incident    Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  timestamp   DateTime
+  label       String
+  description String
+  sourceType  String
+  severity    Int      @default(0)
+}
+
+model Intervention {
+  id             String      @id @default(cuid())
+  transactionId  String
+  transaction    Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  incidentId     String?
+  incident       Incident?   @relation(fields: [incidentId], references: [id])
+  action         String
+  reason         String
+  explanation    String
+  customerChoice String?
+  createdAt      DateTime    @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Trusted circle
+// ---------------------------------------------------------------------------
+
+model TrustedContact {
+  id            String   @id @default(cuid())
+  accountId     String
+  account       Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contactUserId String?
+  contactUser   User?    @relation("ContactUser", fields: [contactUserId], references: [id])
+  name          String
+  relationship  String
+  email         String
+  canApprove    Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Recovery & continuity
+// ---------------------------------------------------------------------------
+
+model RecoveryCase {
+  id                String    @id @default(cuid())
+  incidentId        String    @unique
+  incident          Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  accountId         String
+  account           Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  status            String    @default("OPENED") // OPENED|CONTAINED|BANK_REVIEW|RESTORATION|RESOLVED
+  amountUnderReview Float
+  amountProtected   Float
+  createdAt         DateTime  @default(now())
+  resolvedAt        DateTime?
+
+  events RecoveryEvent[]
+}
+
+model RecoveryEvent {
+  id             String       @id @default(cuid())
+  recoveryCaseId String
+  recoveryCase   RecoveryCase @relation(fields: [recoveryCaseId], references: [id], onDelete: Cascade)
+  step           String
+  status         String
+  label          String
+  timestamp      DateTime     @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Impact & audit
+// ---------------------------------------------------------------------------
+
+model ImpactMetric {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  label     String
+  value     Float
+  unit      String
+  period    String
+  simulated Boolean  @default(true)
+  updatedAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  actorRole String
+  action    String
+  target    String
+  metadata  String?
+  createdAt DateTime @default(now())
+}

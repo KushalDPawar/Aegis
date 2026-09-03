@@ -1,0 +1,377 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  scrollbar-color: rgba(94, 234, 212, 0.35) transparent;
+}
+
+::selection {
+  background: rgba(94, 234, 212, 0.28);
+  color: #f4f3ef;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 100;
+  background: #5eead4;
+  color: #05070a;
+  padding: 0.65rem 1.1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Consistent, visible focus ring everywhere — never rely on color alone. */
+:focus-visible {
+  outline: 2px solid #5eead4;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+}
+
+.glass-panel-solid {
+  background: #0b0f16;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.risk-grid-bg {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.rise {
+  opacity: 0;
+  animation: blurFadeUp 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    opacity: 1;
+    animation: none;
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes blurFadeUp {
+  from {
+    opacity: 0;
+    filter: blur(18px);
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px);
+  }
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(94, 234, 212, 0.3);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes driftA {
+  0%, 100% { transform: translate(-6%, -4%) scale(1); }
+  50% { transform: translate(4%, 6%) scale(1.12); }
+}
+@keyframes driftB {
+  0%, 100% { transform: translate(5%, 6%) scale(1.05); }
+  50% { transform: translate(-4%, -5%) scale(0.95); }
+}
+@keyframes driftC {
+  0%, 100% { transform: translate(0%, 0%) scale(1); }
+  50% { transform: translate(3%, -4%) scale(1.08); }
+}
+
+.ambient-blob-a { animation: driftA 22s ease-in-out infinite; }
+.ambient-blob-b { animation: driftB 26s ease-in-out infinite; }
+.ambient-blob-c { animation: driftC 30s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-blob-a, .ambient-blob-b, .ambient-blob-c {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Landing-page motion system                                             */
+/* Paper texture, legibility bloom, and the slow drift that keeps the      */
+/* hero quietly alive. All of it is decoration-free: nothing here changes  */
+/* layout, only depth and motion.                                         */
+/* ---------------------------------------------------------------------- */
+
+/* Faint 4px dot texture, masked to the centre so it reads as grain on a
+   surface rather than a visible grid. */
+.paper-grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(243, 239, 230, 0.045) 1px, transparent 0);
+  background-size: 4px 4px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 45%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(120% 90% at 50% 45%, #000 0%, transparent 72%);
+}
+
+
+/* Slow ken-burns on the ambient backdrop so a still frame is never fully
+   static. Deliberately long and alternating — nothing snappy. */
+@keyframes kenBurns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.ken-burns {
+  animation: kenBurns 24s ease-in-out infinite alternate;
+  transform-origin: 58% 46%;
+  will-change: transform;
+}
+
+/* Nudges the scroll affordance downward on a loop. */
+@keyframes hintDrift {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 0.72;
+  }
+}
+
+.scroll-hint-arrow {
+  animation: hintDrift 2.6s ease-in-out infinite;
+}
+
+/* Pointer-tracked spotlight on the landing cards. --mx/--my are written by
+   the card component on pointermove; the fallback keeps it centred. */
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(94, 234, 212, 0.1),
+    transparent 62%
+  );
+}
+.spotlight-card:hover::after,
+.spotlight-card:focus-within::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns,
+  .scroll-hint-arrow {
+    animation: none;
+  }
+  .spotlight-card::after {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Cinematic hero (film archetype)                                        */
+/* ---------------------------------------------------------------------- */
+
+/* Absolute rather than fixed. The sections below the hero are opaque, so a
+   fixed film is invisible the moment you scroll — it only costs a full-viewport
+   compositing layer that lives for the entire length of the page. */
+.bg-film {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Strongest at the very top (nav) and very bottom (wordmark + side column),
+   nearly clear through the middle so the film is never flattened by a box. */
+.film-scrim {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 7, 10, 0.82) 0%,
+      rgba(5, 7, 10, 0.34) 18%,
+      rgba(5, 7, 10, 0.06) 42%,
+      rgba(5, 7, 10, 0.34) 74%,
+      rgba(5, 7, 10, 0.88) 100%
+    ),
+    radial-gradient(120% 85% at 50% 45%, transparent 38%, rgba(5, 7, 10, 0.5) 100%);
+}
+
+.film-vignette {
+  box-shadow: inset 0 0 220px 70px #05070a;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Reach section (light editorial closer)                                 */
+/* ---------------------------------------------------------------------- */
+
+.reach-backdrop {
+  background:
+    radial-gradient(120% 90% at 50% 40%, rgba(92, 107, 120, 0.09), transparent 52%),
+    linear-gradient(180deg, #f4f3ef 0%, #eceae3 100%);
+}
+
+.reach-grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(25, 27, 30, 0.05) 1px, transparent 0);
+  background-size: 4px 4px;
+  -webkit-mask-image: radial-gradient(115% 90% at 50% 45%, #000 0%, transparent 74%);
+  mask-image: radial-gradient(115% 90% at 50% 45%, #000 0%, transparent 74%);
+}
+
+/* Lifts the centred headline out of the halftone without any dark overlay. */
+/* The type sits in the gap between the fingertips, and the halftone is dense
+   enough that it eats body copy without help. This clears a generous ellipse
+   of paper under the centre column — light, never a dark scrim. */
+.reach-bloom {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(244, 243, 239, 0.95) 0%,
+    rgba(244, 243, 239, 0.86) 30%,
+    rgba(244, 243, 239, 0.5) 52%,
+    rgba(244, 243, 239, 0.16) 70%,
+    transparent 84%
+  );
+}
+
+@keyframes kenburns {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes softIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.88;
+  }
+}
+
+.reach-art {
+  /* The source PNG sits on warm paper rather than pure white, so `multiply`
+     tints its whole rectangle a shade darker than the page and the artwork
+     reads as a pasted-in box. Feathering the top and bottom edges dissolves
+     that boundary; the left and right never show because the art is sized to
+     bleed past the viewport, which is also what puts the hands "entering from
+     both edges". */
+  opacity: 0.88;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  /* Base transform matches the keyframes' so the art stays centred whether or
+     not the ken-burns is running. */
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 48%;
+  will-change: transform;
+  animation:
+    kenburns 22s ease-in-out infinite alternate,
+    softIn 1.6s ease-out backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reach-art {
+    animation: none;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Operations console                                                     */
+/* ---------------------------------------------------------------------- */
+
+/* Slow, low-contrast pulse on the engine status dot. Fast enough to read as
+   "live", slow enough not to pull the eye off the data. */
+@keyframes statusPing {
+  0% { transform: scale(1); opacity: 0.7; }
+  70% { transform: scale(2.4); opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.status-ping { animation: statusPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+@keyframes drawerIn {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.drawer-in { animation: drawerIn 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* Counts and gauges settle rather than snapping when a value changes. */
+@keyframes valueIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.value-in { animation: valueIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* Row highlight when a payment first appears in the live stream. */
+@keyframes rowArrive {
+  from { background-color: rgba(94, 234, 212, 0.09); }
+  to { background-color: transparent; }
+}
+.row-arrive { animation: rowArrive 1.6s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .status-ping,
+  .drawer-in,
+  .value-in,
+  .row-arrive {
+    animation: none;
+  }
+}
