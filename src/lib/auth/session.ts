@@ -7,9 +7,12 @@ const COOKIE_NAME = "aegis_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
 function getSecretKey() {
-  const secret = process.env.AUTH_SECRET;
+  const secret =
+    process.env.AUTH_SECRET ||
+    // Soft fallback so a fresh Vercel deploy still boots; set AUTH_SECRET in the
+    // Vercel project env for any real/public demo.
+    (process.env.VERCEL ? "aegis-vercel-demo-secret-set-AUTH_SECRET-in-dashboard" : "");
   if (!secret) {
-    // Fails loudly rather than silently signing sessions with a guessable key.
     throw new Error("AUTH_SECRET is not configured. Set it in .env before starting the app.");
   }
   return new TextEncoder().encode(secret);

@@ -24,9 +24,39 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aegis — Adaptive Protection for Digital Banking",
+  title: {
+    default: "Aegis — Adaptive Protection for Digital Banking",
+    template: "%s · Aegis",
+  },
   description:
     "Aegis protects vulnerable customers before, during, and after digital financial fraud — a decision-security prototype for digital banking. Simulation only; not connected to real bank accounts.",
+  applicationName: "Aegis",
+  keywords: [
+    "fintech",
+    "fraud prevention",
+    "digital banking",
+    "decision integrity",
+    "scam interception",
+    "Aegis",
+  ],
+  authors: [{ name: "Aegis" }],
+  openGraph: {
+    title: "Aegis — Adaptive Protection for Digital Banking",
+    description:
+      "Decision-security for digital banking: stop scams before money leaves the account. Simulation prototype.",
+    type: "website",
+    siteName: "Aegis",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Aegis — Adaptive Protection for Digital Banking",
+    description:
+      "Decision-security for digital banking: stop scams before money leaves the account.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport: Viewport = {
